@@ -1,0 +1,6 @@
+{
+"root_request_url":"https://api.zoom.us/v2/",
+"api_key":"<your zoom api key",
+"api_secret":"<your zoom api secret>",
+"data_type":"JSON"
+}
