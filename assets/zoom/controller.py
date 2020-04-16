@@ -17,7 +17,8 @@ import zoom_client.assets.zoom.modules.users as users
 import zoom_client.assets.zoom.modules.report as report
 import zoom_client.assets.zoom.modules.dashboard as dashboard
 
-class controller():
+
+class controller:
     def __init__(self, config_data, *args, **kwargs):
         """
         params:
@@ -42,8 +43,9 @@ class controller():
             Configured zoom web api client object
         """
 
-        return api_client.client(config_data["root_request_url"],
-                                        config_data["api_key"],
-                                        config_data["api_secret"],
-                                        config_data["data_type"]
-                                        )
+        return api_client.client(
+            config_data["root_request_url"],
+            config_data["api_key"],
+            config_data["api_secret"],
+            config_data["data_type"],
+        )

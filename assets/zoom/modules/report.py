@@ -1,7 +1,8 @@
 import logging
-from datetime import datetime, timedelta                                                                                                                                                                              
+from datetime import datetime, timedelta
 
-class report():
+
+class report:
     def __init__(self, controller, *args, **kwargs):
         self.zoom = controller
 
@@ -16,7 +17,9 @@ class report():
         year = str(int(datetime.now().strftime("%Y")))
         month = str(int(datetime.now().strftime("%m")))
 
-        result = self.zoom.api_client.do_request("get", "report/daily", {"year":year,"month":month})
+        result = self.zoom.api_client.do_request(
+            "get", "report/daily", {"year": year, "month": month}
+        )
 
         return result
 
@@ -35,10 +38,12 @@ class report():
         year = str(int(yesterday.strftime("%Y")))
         month = str(int(yesterday.strftime("%m")))
 
-        result = self.zoom.api_client.do_request("get", "report/daily", {"year":year,"month":month})
+        result = self.zoom.api_client.do_request(
+            "get", "report/daily", {"year": year, "month": month}
+        )
 
         for item in result["dates"]:
             if item["date"] == yesterday_str:
                 return item
-        
+
         return {}

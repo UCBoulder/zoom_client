@@ -1,6 +1,5 @@
 """
 Class for creating connections to Zoom API
-Last modified: July 2017
 By: Dave Bunten
 """
 
@@ -8,7 +7,9 @@ import json
 import requests
 import jwt
 import datetime
+
 requests.packages.urllib3.disable_warnings()
+
 
 class client:
     def __init__(self, root_request_url, key, secret, data_type):
@@ -18,41 +19,58 @@ class client:
         self.data_type = data_type
 
     def generate_jwt(self):
-        headers = {"alg": "HS256",
-                    "typ": "JWT",
-                    }
+        headers = {
+            "alg": "HS256",
+            "typ": "JWT",
+        }
 
-        encoded = jwt.encode({'iss': self.key, 'exp':datetime.datetime.utcnow() + datetime.timedelta(seconds=30)},
-                                self.secret,
-                                algorithm='HS256',
-                                headers=headers
-                                )
-        
-        return {"Authorization":"Bearer "+encoded.decode('utf-8'), 'Content-type':'application/json'}
+        encoded = jwt.encode(
+            {
+                "iss": self.key,
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(seconds=30),
+            },
+            self.secret,
+            algorithm="HS256",
+            headers=headers,
+        )
+
+        return {
+            "Authorization": "Bearer " + encoded.decode("utf-8"),
+            "Content-type": "application/json",
+        }
 
     def do_request(self, request_type, resource, request_parameters, body={}):
 
         if request_type == "get":
-            rsp = requests.get(self.root_request_url + resource,
-                                params=request_parameters,
-                                headers=self.generate_jwt(),
-                                verify=False)
+            rsp = requests.get(
+                self.root_request_url + resource,
+                params=request_parameters,
+                headers=self.generate_jwt(),
+                verify=False,
+            )
 
         elif request_type == "delete":
-            rsp = requests.delete(self.root_request_url + resource,
-                                params=request_parameters,
-                                headers=self.generate_jwt(),
-                                verify=False)
+            rsp = requests.delete(
+                self.root_request_url + resource,
+                params=request_parameters,
+                headers=self.generate_jwt(),
+                verify=False,
+            )
 
         elif request_type == "patch":
-            rsp = requests.patch(self.root_request_url + resource,
-                                params=request_parameters,
-                                data=body,
-                                headers=self.generate_jwt(),
-                                verify=False)
-        
-        result = rsp.json()
+            rsp = requests.patch(
+                self.root_request_url + resource,
+                params=request_parameters,
+                data=body,
+                headers=self.generate_jwt(),
+                verify=False,
+            )
+
+        try:
+            result = rsp.json()
+        except json.decoder.JSONDecodeError as e:
+            result = rsp
+
         rsp.close()
 
         return result
-

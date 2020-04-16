@@ -1,8 +1,9 @@
 import logging
 from time import sleep
-from datetime import datetime, timedelta                                                                                                                                                                              
+from datetime import datetime, timedelta
 
-class dashboard():
+
+class dashboard:
     def __init__(self, controller, *args, **kwargs):
         self.zoom = controller
 
@@ -19,27 +20,30 @@ class dashboard():
         """
 
         more_pages = True
-        next_page_token = ''
+        next_page_token = ""
         result_list = []
 
         while more_pages:
-            result = self.zoom.api_client.do_request("get", "metrics/meetings", {   "from":from_date,
-                                                                                    "to":to_date,
-                                                                                    "type":"past",
-                                                                                    "page_size":200,
-                                                                                    "next_page_token": next_page_token
-                                                                                })
-            
+            result = self.zoom.api_client.do_request(
+                "get",
+                "metrics/meetings",
+                {
+                    "from": from_date,
+                    "to": to_date,
+                    "type": "past",
+                    "page_size": 200,
+                    "next_page_token": next_page_token,
+                },
+            )
+
             result_list += result["meetings"]
             sleep(60)
-            if result['next_page_token'] != "":
-                next_page_token = result['next_page_token']
+            if result["next_page_token"] != "":
+                next_page_token = result["next_page_token"]
             else:
                 break
-            
 
         return result_list
-
 
     def get_past_meeting_participants(self, meeting_uuid):
         """
@@ -54,27 +58,29 @@ class dashboard():
         """
 
         more_pages = True
-        next_page_token = ''
+        next_page_token = ""
         result_list = []
 
         while more_pages:
-            result = self.zoom.api_client.do_request("get", "metrics/meetings/"+meeting_uuid+"/participants", { "type":"past",
-                                                                                                "page_size":200,
-                                                                                                "next_page_token": next_page_token
-                                                                                                })
+            result = self.zoom.api_client.do_request(
+                "get",
+                "metrics/meetings/" + meeting_uuid + "/participants",
+                {"type": "past", "page_size": 200, "next_page_token": next_page_token},
+            )
 
             sleep(1)
 
-            if 'participants' in result.keys():
+            if "participants" in result.keys():
                 result_list += result["participants"]
             else:
-                result_list += [{'error_code' : result['code'],'error': result['message']}]
+                result_list += [
+                    {"error_code": result["code"], "error": result["message"]}
+                ]
                 break
-            
-            if result['next_page_token'] != "":
-                next_page_token = result['next_page_token']
+
+            if result["next_page_token"] != "":
+                next_page_token = result["next_page_token"]
             else:
                 break
-            
 
         return result_list
