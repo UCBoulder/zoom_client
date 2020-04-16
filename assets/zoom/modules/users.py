@@ -121,6 +121,18 @@ class users():
         self.zoom.model.users = users_listing
 
         return users_listing
+    
+    def get_users_from_list(self, user_list):
+        logging.info("Gathering current Zoom user data from list...")
+
+        result_list = []
+        for user in user_list:
+            result = self.zoom.api_client.do_request("get", "users/"+user, {"userId":user})
+            result_list.append(result)
+            
+        self.zoom.model.users = result_list
+        
+        return result_list
 
     def get_current_user_type_counts(self):
         """

@@ -1,7 +1,6 @@
 """
 Zoom controller. Assists with performing work using Zoom API
 
-Last modified: June 2018
 By: Dave Bunten
 
 License: MIT - see license.txt
@@ -12,11 +11,11 @@ import sys
 import logging
 import json
 import time
-import assets.zoom.model as model
-import assets.zoom.api_client as api_client
-import assets.zoom.modules.users as users
-import assets.zoom.modules.report as report
-import assets.zoom.modules.dashboard as dashboard
+import zoom_client.assets.zoom.model as model
+import zoom_client.assets.zoom.api_client as api_client
+import zoom_client.assets.zoom.modules.users as users
+import zoom_client.assets.zoom.modules.report as report
+import zoom_client.assets.zoom.modules.dashboard as dashboard
 
 class controller():
     def __init__(self, config_data, *args, **kwargs):
