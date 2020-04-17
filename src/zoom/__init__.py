@@ -1,1 +1,3 @@
-__all__ = ['api_client', 'controller', 'model']
+from .modules.dashboard import dashboard
+from .modules.report import report
+from .modules.users import users
