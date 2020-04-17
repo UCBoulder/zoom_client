@@ -29,7 +29,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    packages=["zoom", "zoom.modules"],
+    packages=["zoom_client", "zoom_client.modules"],
     python_requires=">=3.6",
     install_requires=install_requires,
 )
