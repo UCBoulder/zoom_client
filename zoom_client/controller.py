@@ -11,11 +11,11 @@ import sys
 import logging
 import json
 import time
-import zoom.model as model
-import zoom.api_client as api_client
-import zoom.modules.users as users
-import zoom.modules.report as report
-import zoom.modules.dashboard as dashboard
+import zoom_client.model as model
+import zoom_client.api_client as api_client
+import zoom_client.modules.users as users
+import zoom_client.modules.report as report
+import zoom_client.modules.dashboard as dashboard
 
 
 class controller:
