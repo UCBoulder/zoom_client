@@ -3,7 +3,7 @@ Zoom controller. Assists with performing work using Zoom API
 
 By: Dave Bunten
 
-License: MIT - see license.txt
+License: MIT - see LICENSE
 """
 
 import os
@@ -11,11 +11,11 @@ import sys
 import logging
 import json
 import time
-import zoom_client.assets.zoom.model as model
-import zoom_client.assets.zoom.api_client as api_client
-import zoom_client.assets.zoom.modules.users as users
-import zoom_client.assets.zoom.modules.report as report
-import zoom_client.assets.zoom.modules.dashboard as dashboard
+import zoom.src.model as model
+import zoom.src.api_client as api_client
+import zoom.src.modules.users as users
+import zoom.src.modules.report as report
+import zoom.src.modules.dashboard as dashboard
 
 
 class controller:

@@ -1,25 +1,32 @@
-# Zoom Client (v2)
+# Zoom Client
 
 A Python client for interfacing with the Zoom API to perform various tasks.
 
-## Prerequisites and Documentation
+## Requirements and Documentation
 
-Before you get started, make sure to install or create the following prerequisites:
-
-* Python 3.x: [https://www.python.org/downloads/](https://www.python.org/downloads/)
-* Python Requests Library (non-native library used for HTTP requests): [http://docs.python-requests.org/en/master/](http://docs.python-requests.org/en/master/)
-* Python Pandas Library (non-native library used for data processing): [https://pandas.pydata.org/](https://pandas.pydata.org/)
+* Python >= 3.6: [https://www.python.org/downloads/](https://www.python.org/downloads/)
 * Enable Zoom API key: [https://zoom.us/developer/api/credential](https://zoom.us/developer/api/credential)
-* **Note:** This tool uses version 2 of the Zoom API.
 
-Zoom API documentation can be found at the following URL: [https://zoom.github.io/api/](https://zoom.github.io/api/)
+Zoom API documentation can be found at the following URL: [https://marketplace.zoom.us/docs/api-reference/zoom-api](https://marketplace.zoom.us/docs/api-reference/zoom-api)
 
 ## Usage
 
-1. Ensure prerequisites outlined above are completed.
-2. Fill in necessary &lt;bracketed&gt; areas in /config/sample_config.json specific to your account
-2. Rename sample_config.json to config.json (removing the text "sample_")
+1. Ensure requirements outlined above are completed.
+2. Provide necessary &lt;bracketed&gt; areas in examples/sample_config.json specific to your account
+
+## Example
+```python
+#open config file with api key/secret information
+config_file = open(run_path+"/config/config.json")
+config_data = json.load(config_file)
+
+#create Zoom python client
+zoom = controller.controller(config_data)
+
+zoom.users.get_current_users()
+zoom_user_counts = zoom.users.get_current_user_type_counts()
+```
 
 ## License
 
-MIT - See license.txt
+MIT - See LICENSE

@@ -1,8 +1,3 @@
-"""
-Class for creating connections to Zoom API
-By: Dave Bunten
-"""
-
 import json
 import requests
 import jwt
