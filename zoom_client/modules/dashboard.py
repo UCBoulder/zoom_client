@@ -23,6 +23,7 @@ class dashboard:
         next_page_token = ""
         result_list = []
 
+        request_count = 0
         while more_pages:
             result = self.zoom.api_client.do_request(
                 "get",
@@ -31,13 +32,20 @@ class dashboard:
                     "from": from_date,
                     "to": to_date,
                     "type": "past",
-                    "page_size": 200,
+                    "page_size": 300,
                     "next_page_token": next_page_token,
                 },
             )
 
             result_list += result["meetings"]
-            sleep(60)
+
+            # artificial rate limit every 10 requests to meet Zoom's requirements
+            # buffer of 5 seconds to account for potential inconsistencies
+            # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
+            request_count += 1
+            if request_count % 10 == 0:
+                sleep(65)
+
             if result["next_page_token"] != "":
                 next_page_token = result["next_page_token"]
             else:
@@ -61,6 +69,7 @@ class dashboard:
         next_page_token = ""
         result_list = []
 
+        request_count = 0
         while more_pages:
             result = self.zoom.api_client.do_request(
                 "get",
@@ -68,7 +77,12 @@ class dashboard:
                 {"type": "past", "page_size": 200, "next_page_token": next_page_token},
             )
 
-            sleep(1)
+            # artificial rate limit every 10 requests to meet Zoom's requirements
+            # buffer of 5 seconds to account for potential inconsistencies
+            # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
+            request_count += 1
+            if request_count % 10 == 0:
+                sleep(5)
 
             if "participants" in result.keys():
                 result_list += result["participants"]
