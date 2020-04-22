@@ -1,13 +1,13 @@
 import logging
 from time import sleep
 from datetime import datetime, timedelta
-
+from ratelimit import limits, sleep_and_retry
 
 class dashboard:
     def __init__(self, controller, *args, **kwargs):
         self.zoom = controller
 
-    def get_past_meetings(self, from_date, to_date):
+    def get_past_meetings(self, from_date: str, from_date: str) -> list:
         """
         Finds Zoom meetings in provided date range. Note only one request per minute may be made due to Zoom rate limits.
 
@@ -19,12 +19,11 @@ class dashboard:
             list of dictionaries containing relevant meeting information from Zoom.
         """
 
-        more_pages = True
-        next_page_token = ""
-        result_list = []
-
-        request_count = 0
-        while more_pages:
+        # Note: artificial rate limit
+        # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
+        @sleep_and_retry
+        @limits(calls=10, period=65)
+        def make_requests(next_page_token: str=None, result_list: list=[]) -> list:
             result = self.zoom.api_client.do_request(
                 "get",
                 "metrics/meetings",
@@ -39,21 +38,16 @@ class dashboard:
 
             result_list += result["meetings"]
 
-            # artificial rate limit every 10 requests to meet Zoom's requirements
-            # buffer of 5 seconds to account for potential inconsistencies
-            # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
-            request_count += 1
-            if request_count % 10 == 0:
-                sleep(65)
-
             if result["next_page_token"] != "":
-                next_page_token = result["next_page_token"]
+                make_requests(next_page_token=result["next_page_token"], result_list)
             else:
-                break
+                return
+
+        result_list = make_requests()
 
         return result_list
 
-    def get_past_meeting_participants(self, meeting_uuid):
+    def get_past_meeting_participants(self, meeting_uuid: str) -> list:
         """
         Finds Zoom meeting participants from given meeting_uuid (specific instance of Zoom meeting).
         Note only one request per second may be made due to Zoom rate limits.
@@ -65,24 +59,16 @@ class dashboard:
             list of dictionaries containing relevant meeting information from Zoom.
         """
 
-        more_pages = True
-        next_page_token = ""
-        result_list = []
-
-        request_count = 0
-        while more_pages:
+        # Note: artificial rate limit
+        # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
+        @sleep_and_retry
+        @limits(calls=10, period=5)
+        def make_requests(next_page_token: str=None, result_list: list=[]) -> list:
             result = self.zoom.api_client.do_request(
                 "get",
                 "metrics/meetings/" + meeting_uuid + "/participants",
-                {"type": "past", "page_size": 200, "next_page_token": next_page_token},
+                {"type": "past", "page_size": 300, "next_page_token": next_page_token},
             )
-
-            # artificial rate limit every 10 requests to meet Zoom's requirements
-            # buffer of 5 seconds to account for potential inconsistencies
-            # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
-            request_count += 1
-            if request_count % 10 == 0:
-                sleep(5)
 
             if "participants" in result.keys():
                 result_list += result["participants"]
@@ -93,8 +79,10 @@ class dashboard:
                 break
 
             if result["next_page_token"] != "":
-                next_page_token = result["next_page_token"]
+                make_requests(next_page_token=result["next_page_token"], result_list)
             else:
-                break
+                return
+
+        result_list = make_requests()
 
         return result_list
