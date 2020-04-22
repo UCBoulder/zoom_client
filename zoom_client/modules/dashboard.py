@@ -41,7 +41,7 @@ class dashboard:
             if result["next_page_token"] != "":
                 make_requests(next_page_token=result["next_page_token"], result_list)
             else:
-                return
+                return result_list
 
         result_list = make_requests()
 
@@ -81,7 +81,7 @@ class dashboard:
             if result["next_page_token"] != "":
                 make_requests(next_page_token=result["next_page_token"], result_list)
             else:
-                return
+                return result_list
 
         result_list = make_requests()
 
