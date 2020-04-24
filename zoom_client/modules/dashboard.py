@@ -25,7 +25,7 @@ class dashboard:
         @sleep_and_retry
         @limits(calls=20, period=65)
         def make_requests(
-            page_number: int = 0, next_page_token: str = None, result_list: list = []
+            page_number: int = 1, next_page_token: str = None, result_list: list = []
         ) -> list:
 
             logging.info("Making meeting request " + str(page_number))
@@ -78,7 +78,7 @@ class dashboard:
         @sleep_and_retry
         @limits(calls=40, period=5)
         def make_requests(
-            page_number: int = 0, next_page_token: str = None, result_list: list = []
+            page_number: int = 1, next_page_token: str = None, result_list: list = []
         ) -> list:
             logging.info("Making meeting partcipants request " + str(page_number))
 

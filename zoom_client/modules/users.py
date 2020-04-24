@@ -129,7 +129,7 @@ class users:
         @sleep_and_retry
         @limits(calls=60, period=5)
         def make_requests(
-            page_number: int = 0, page_count: int = None, result_list: list = []
+            page_number: int = 1, page_count: int = None, result_list: list = []
         ) -> list:
 
             logging.info(
