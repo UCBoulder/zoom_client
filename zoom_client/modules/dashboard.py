@@ -3,11 +3,12 @@ from time import sleep
 from datetime import datetime, timedelta
 from ratelimit import limits, sleep_and_retry
 
+
 class dashboard:
     def __init__(self, controller, *args, **kwargs):
         self.zoom = controller
 
-    def get_past_meetings(self, from_date: str, from_date: str) -> list:
+    def get_past_meetings(self, from_date: str, to_date: str) -> list:
         """
         Finds Zoom meetings in provided date range. Note only one request per minute may be made due to Zoom rate limits.
 
@@ -18,12 +19,17 @@ class dashboard:
         returns:
             list of dictionaries containing relevant meeting information from Zoom.
         """
-
+        logging.info("Gathering Zoom meetings data...")
         # Note: artificial rate limit
         # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
         @sleep_and_retry
-        @limits(calls=10, period=65)
-        def make_requests(next_page_token: str=None, result_list: list=[]) -> list:
+        @limits(calls=20, period=65)
+        def make_requests(
+            page_number: int = 0, next_page_token: str = None, result_list: list = []
+        ) -> list:
+
+            logging.info("Making meeting request " + str(page_number))
+
             result = self.zoom.api_client.do_request(
                 "get",
                 "metrics/meetings",
@@ -38,8 +44,15 @@ class dashboard:
 
             result_list += result["meetings"]
 
+            page_number += 1
+
             if result["next_page_token"] != "":
-                make_requests(next_page_token=result["next_page_token"], result_list)
+                make_requests(
+                    page_number=page_number,
+                    next_page_token=result["next_page_token"],
+                    result_list=result_list,
+                )
+                return result_list
             else:
                 return result_list
 
@@ -59,16 +72,23 @@ class dashboard:
             list of dictionaries containing relevant meeting information from Zoom.
         """
 
+        logging.info("Gathering Zoom meeting participant data...")
         # Note: artificial rate limit
         # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
         @sleep_and_retry
-        @limits(calls=10, period=5)
-        def make_requests(next_page_token: str=None, result_list: list=[]) -> list:
+        @limits(calls=40, period=5)
+        def make_requests(
+            page_number: int = 0, next_page_token: str = None, result_list: list = []
+        ) -> list:
+            logging.info("Making meeting partcipants request " + str(page_number))
+
             result = self.zoom.api_client.do_request(
                 "get",
                 "metrics/meetings/" + meeting_uuid + "/participants",
                 {"type": "past", "page_size": 300, "next_page_token": next_page_token},
             )
+
+            page_number += 1
 
             if "participants" in result.keys():
                 result_list += result["participants"]
@@ -76,10 +96,14 @@ class dashboard:
                 result_list += [
                     {"error_code": result["code"], "error": result["message"]}
                 ]
-                break
 
             if result["next_page_token"] != "":
-                make_requests(next_page_token=result["next_page_token"], result_list)
+                make_requests(
+                    page_number=page_number,
+                    next_page_token=result["next_page_token"],
+                    result_list=result_list,
+                )
+                return result_list
             else:
                 return result_list
 

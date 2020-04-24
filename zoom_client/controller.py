@@ -17,6 +17,8 @@ import zoom_client.modules.users as users
 import zoom_client.modules.report as report
 import zoom_client.modules.dashboard as dashboard
 
+#set recursion limit higher for rate limitations functions
+sys.setrecursionlimit(20000)
 
 class controller:
     def __init__(self, config_data, *args, **kwargs):

@@ -1,6 +1,7 @@
 import logging
 import json
 from datetime import datetime
+from ratelimit import limits, sleep_and_retry
 
 
 class users:
@@ -123,33 +124,40 @@ class users:
     def get_current_users(self):
         logging.info("Gathering current Zoom user data ...")
 
-        # page and result counts for user list requests
-        page = 1
-        page_count = 2
-        result_count = 300
+        # Note: artificial rate limit
+        # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
+        @sleep_and_retry
+        @limits(calls=60, period=5)
+        def make_requests(
+            page_number: int = 0, page_count: int = None, result_list: list = []
+        ) -> list:
 
-        users_listing = []
-
-        while page <= page_count:
+            logging.info(
+                "Making user request " + str(page_number) + " of " + str(page_count)
+            )
             # make the Zoom api request and parse the result for the data we need
             result = self.zoom.api_client.do_request(
-                "get", "users", {"page_size": "300", "page_number": page}
+                "get", "users", {"page_size": "300", "page_number": page_number}
             )
 
             # if no users are returned in the result, we break our loop
-            if "users" not in result:
-                break
+            if "users" in result:
+                user_results = result["users"]
+                result_list += user_results
 
-            page_count = result["page_count"]
+            page_number += 1
 
-            user_results = result["users"]
+            if page_number > int(result["page_count"]):
+                return result_list
+            else:
+                make_requests(
+                    page_number=page_number,
+                    page_count=result["page_count"],
+                    result_list=result_list,
+                )
+                return result_list
 
-            # loop through each element in the user data returned
-            [users_listing.append(user_data) for user_data in user_results]
-
-            # increment our page count by 1 for each time we loop requests for
-            # the user listings from Zoom
-            page += 1
+        users_listing = make_requests()
 
         self.zoom.model.users = users_listing
 
