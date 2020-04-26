@@ -42,19 +42,32 @@ class dashboard:
                 },
             )
 
-            result_list += result["meetings"]
-
             page_number += 1
 
-            if result["next_page_token"] != "":
-                make_requests(
-                    page_number=page_number,
-                    next_page_token=result["next_page_token"],
-                    result_list=result_list,
+            if "meetings" in result.keys():
+                result_list += result["meetings"]
+            else:
+                result_list += [
+                    {"error_code": result["code"], "error": result["message"]}
+                ]
+
+            if "code" in result.keys():
+                logging.error(
+                    "Error: " + str(result["code"]) + " " + str(result["message"])
                 )
                 return result_list
-            else:
-                return result_list
+
+            elif "next_page_token" in result.keys():
+
+                if result["next_page_token"] != "":
+                    make_requests(
+                        page_number=page_number,
+                        next_page_token=result["next_page_token"],
+                        result_list=result_list,
+                    )
+                    return result_list
+                else:
+                    return result_list
 
         result_list = make_requests()
 
@@ -96,9 +109,11 @@ class dashboard:
                 result_list += [
                     {"error_code": result["code"], "error": result["message"]}
                 ]
-                
+
             if "code" in result.keys():
-                logging.error("Error: "+str(result["code"])+" "+str(result["message"]))
+                logging.error(
+                    "Error: " + str(result["code"]) + " " + str(result["message"])
+                )
                 return result_list
 
             elif "next_page_token" in result.keys():
