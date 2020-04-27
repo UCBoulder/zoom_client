@@ -23,7 +23,7 @@ class dashboard:
         # Note: artificial rate limit
         # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
         @sleep_and_retry
-        @limits(calls=20, period=65)
+        @limits(calls=19, period=65)
         def make_requests(
             page_number: int = 1, next_page_token: str = None, result_list: list = []
         ) -> list:
@@ -89,7 +89,7 @@ class dashboard:
         # Note: artificial rate limit
         # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
         @sleep_and_retry
-        @limits(calls=40, period=5)
+        @limits(calls=39, period=5)
         def make_requests(
             page_number: int = 1, next_page_token: str = None, result_list: list = []
         ) -> list:
