@@ -74,7 +74,7 @@ class users:
             "delete", "users/" + user_id, {"action": "delete"}
         )
 
-        return result.status_code
+        return result
 
     def batch_delete_users(self, user_list):
 
