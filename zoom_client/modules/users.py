@@ -32,7 +32,7 @@ class users:
             resp = self.update_user(user_id, update_properties)
             time_interval_request_count += 1
 
-            if resp == 204:
+            if resp.status_code == 204:
                 logging.info("Updated user " + user_id + " successfully.")
                 number_users_updated += 1
 
@@ -87,7 +87,7 @@ class users:
             resp = self.delete_user(user_id)
             time_interval_request_count += 1
 
-            if resp == 204:
+            if resp.status_code == 204:
                 logging.info("Deprovisioned user " + user_id + " successfully.")
                 number_users_deprovisioned += 1
 
