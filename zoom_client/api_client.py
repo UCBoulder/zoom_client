@@ -69,7 +69,7 @@ class client:
 
         try:
             result = rsp.json()
-        except json.decoder.JSONDecodeError as e:
+        except:
             result = rsp
 
         rsp.close()
