@@ -62,6 +62,15 @@ class client:
                 verify=False,
             )
 
+        elif request_type == "post":
+            rsp = requests.post(
+                self.root_request_url + resource,
+                params=request_parameters,
+                data=body,
+                headers=self.generate_jwt(),
+                verify=False,
+            )
+
         if "Retry-After" in rsp.headers.keys():
             logging.warning("Retry-After detected: " + str(rsp.headers["Retry-After"]))
             logging.warning("X-RateLimit-Limit: " + str(rsp.headers["X-RateLimit-Limit"]))

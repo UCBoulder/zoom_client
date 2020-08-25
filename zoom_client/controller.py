@@ -14,6 +14,7 @@ import time
 import zoom_client.model as model
 import zoom_client.api_client as api_client
 import zoom_client.modules.users as users
+import zoom_client.modules.group as group
 import zoom_client.modules.report as report
 import zoom_client.modules.dashboard as dashboard
 
@@ -31,6 +32,7 @@ class controller:
         self.config_data = config_data
         self.api_client = self.create_api_client(config_data)
         self.users = users.users(self)
+        self.group = group.group(self)
         self.report = report.report(self)
         self.dashboard = dashboard.dashboard(self)
 
