@@ -9,7 +9,7 @@ A Python client for interfacing with the Zoom API to perform various tasks.
 
 Zoom API documentation can be found at the following URL: [https://marketplace.zoom.us/docs/api-reference/zoom-api](https://marketplace.zoom.us/docs/api-reference/zoom-api)
 
-## Installation
+## Installation from GitHub
 
 ```shell
 pip install git+https://github.com/CUBoulder-OIT/zoom_client@main#egg=zoom_client
