@@ -15,6 +15,12 @@ Zoom API documentation can be found at the following URL: [https://marketplace.z
 pip install git+https://github.com/CUBoulder-OIT/zoom_client@main#egg=zoom_client
 ```
 
+## Distribution Packaging
+
+```shell
+python setup.py sdist bdist_wheel
+```
+
 ## Usage
 
 1. Ensure requirements outlined above are completed.
