@@ -20,4 +20,3 @@ def test_init():
     zoom = controller(config_data)
 
     assert hasattr(zoom, "api_client")
-
