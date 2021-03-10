@@ -39,6 +39,12 @@ zoom.users.get_current_users()
 zoom_user_counts = zoom.users.get_current_user_type_counts()
 ```
 
+## Notice
+
+All trademarks, service marks and company names are the property of their respective owners.
+
+Reference in this site to any specific commercial product, process, or service, or the use of any trade, firm or corporation name is for the information and convenience of the public, and does not constitute endorsement, recommendation, or favoring by the University of Colorado.
+
 ## License
 
 MIT - See LICENSE
