@@ -17,7 +17,7 @@ if os.path.isfile(requirement_path):
 # This call to setup() does all the work
 setuptools.setup(
     name="zoom_client",
-    version="0.0.1",
+    version="0.0.2",
     description="Zoom (Video Communications) API Client",
     long_description=README,
     long_description_content_type="text/markdown",
