@@ -125,7 +125,8 @@ class users:
         logging.info("Gathering current Zoom user data ...")
 
         # Note: artificial rate limit
-        # more detail can be found here: https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
+        # more detail can be found here:
+        # https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits
         @sleep_and_retry
         @limits(calls=60, period=5)
         def make_requests(
@@ -178,9 +179,6 @@ class users:
         return result_list
 
     def get_current_user_type_counts(self):
-        """
-  
-        """
 
         logging.info("Gathering current Zoom user metrics...")
 
@@ -208,8 +206,9 @@ class users:
                 corp_account_count += 1
                 user_data["type"] = "Corp"
 
-        # Share various metrics with the user on total, basic, pro and deprovisioning
-        # information to better inform them before proceeding.
+        # Share various metrics with the user on
+        # total, basic, pro and deprovisioning information to better
+        # inform them before proceeding.
         logging.info("Total accounts: " + str(account_count))
         logging.info("Basic accounts: " + str(basic_account_count))
         logging.info("Pro accounts: " + str(pro_account_count))

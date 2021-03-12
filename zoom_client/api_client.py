@@ -73,8 +73,12 @@ class client:
 
         if "Retry-After" in rsp.headers.keys():
             logging.warning("Retry-After detected: " + str(rsp.headers["Retry-After"]))
-            logging.warning("X-RateLimit-Limit: " + str(rsp.headers["X-RateLimit-Limit"]))
-            logging.warning("X-RateLimit-Remaining: " + str(rsp.headers["X-RateLimit-Remaining"]))
+            logging.warning(
+                "X-RateLimit-Limit: " + str(rsp.headers["X-RateLimit-Limit"])
+            )
+            logging.warning(
+                "X-RateLimit-Remaining: " + str(rsp.headers["X-RateLimit-Remaining"])
+            )
 
         try:
             result = rsp.json()

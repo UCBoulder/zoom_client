@@ -13,7 +13,9 @@ class group:
         # Special note: uses user emails as opposed to ID's
 
         logging.info(
-            "Adding {} users to group with id {}".format(str(len(user_emails)), group_id)
+            "Adding {} users to group with id {}".format(
+                str(len(user_emails)), group_id
+            )
         )
 
         def chunks(l, n):
@@ -53,7 +55,7 @@ class group:
                     "delete", "groups/" + group_id + "/members/" + user_id, ""
                 )
             # simple check to make sure we don't exceed rate limits, this needs improvement!
-            # 30 requests per second are permissable and well below actual Edu account limits 
+            # 30 requests per second are permissable and well below actual Edu account limits
             time.sleep(1)
 
         return result

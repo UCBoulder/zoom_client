@@ -1,19 +1,19 @@
 import pathlib
 import setuptools, os
- 
+
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
- 
+
 # The text of the README file
 README = (HERE / "README.md").read_text()
- 
+
 # Pull requirements from the text file
-requirement_path = (HERE / 'requirements.txt')
+requirement_path = HERE / "requirements.txt"
 install_requires = []
 if os.path.isfile(requirement_path):
     with open(requirement_path) as f:
         install_requires = f.read().splitlines()
- 
+
 # This call to setup() does all the work
 setuptools.setup(
     name="zoom_client",
