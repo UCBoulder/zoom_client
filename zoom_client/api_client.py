@@ -42,7 +42,7 @@ class client:
                 self.root_request_url + resource,
                 params=request_parameters,
                 headers=self.generate_jwt(),
-                verify=False,
+                verify=True,
             )
 
         elif request_type == "delete":
@@ -50,7 +50,7 @@ class client:
                 self.root_request_url + resource,
                 params=request_parameters,
                 headers=self.generate_jwt(),
-                verify=False,
+                verify=True,
             )
 
         elif request_type == "patch":
@@ -59,7 +59,7 @@ class client:
                 params=request_parameters,
                 data=body,
                 headers=self.generate_jwt(),
-                verify=False,
+                verify=True,
             )
 
         elif request_type == "post":
@@ -68,7 +68,7 @@ class client:
                 params=request_parameters,
                 data=body,
                 headers=self.generate_jwt(),
-                verify=False,
+                verify=True,
             )
 
         if "Retry-After" in rsp.headers.keys():

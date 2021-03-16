@@ -9,16 +9,14 @@ A Python client for interfacing with the Zoom API to perform various tasks.
 
 Zoom API documentation can be found at the following URL: [https://marketplace.zoom.us/docs/api-reference/zoom-api](https://marketplace.zoom.us/docs/api-reference/zoom-api)
 
-## Installation from GitHub
+## Installation
 
 ```shell
+# from pypi
+pip install zoom_client
+
+# from github
 pip install git+https://github.com/CUBoulder-OIT/zoom_client@main#egg=zoom_client
-```
-
-## Distribution Packaging
-
-```shell
-python setup.py sdist bdist_wheel
 ```
 
 ## Usage
@@ -26,8 +24,10 @@ python setup.py sdist bdist_wheel
 1. Ensure requirements outlined above are completed.
 2. Provide necessary &lt;bracketed&gt; areas in examples/sample_config.json specific to your account
 
-## Example
+## Example Usage
 ```python
+from zoom_client.controller import controller
+
 #open config file with api key/secret information
 config_file = open(run_path+"/config/config.json")
 config_data = json.load(config_file)
@@ -37,6 +37,29 @@ zoom = controller.controller(config_data)
 
 zoom.users.get_current_users()
 zoom_user_counts = zoom.users.get_current_user_type_counts()
+```
+
+## Linting and Testing
+
+This repo makes use of [Black](https://github.com/psf/black) and [Bandit](https://github.com/PyCQA/bandit) for linting and [PyTest](https://github.com/pytest-dev/pytest) for testing. See below for an example of how to peform these checks manually.
+
+```shell
+# assumes pwd as repo dir
+
+# black linting
+black . --check
+
+# bandit linting
+bandit -r . -x ./tests
+
+# pytest testing
+pytest
+```
+
+## Distribution Packaging
+
+```shell
+python setup.py sdist bdist_wheel
 ```
 
 ## Notice
