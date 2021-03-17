@@ -1,10 +1,17 @@
+"""
+zoom_client class and related methods for gathering data from reports
+"""
 import logging
 from datetime import datetime, timedelta
 
 
-class report:
-    def __init__(self, controller, *args, **kwargs):
-        self.zoom = controller
+class Report:
+    """
+    zoom_client report class for gathering data from reports
+    """
+
+    def __init__(self, client):
+        self.zoom = client
 
     def get_daily_report_current_month(self):
         """
@@ -12,12 +19,20 @@ class report:
 
         returns:
             resulting response from the Zoom web api request with dates in the format:
-            {'date': '2018-07-01', 'new_users': 1, 'meetings': 1, 'participants': 1, 'meeting_minutes': 1}
+            {
+                "date": "2018-07-01",
+                "new_users": 1,
+                "meetings": 1,
+                "participants": 1,
+                "meeting_minutes": 1,
+            }
         """
         year = str(int(datetime.now().strftime("%Y")))
         month = str(int(datetime.now().strftime("%m")))
 
-        result = self.zoom.api_client.do_request(
+        logging.info("Gathering daily report data from %s/%s", month, year)
+
+        result = self.zoom.do_request(
             "get", "report/daily", {"year": year, "month": month}
         )
 
@@ -29,7 +44,13 @@ class report:
 
         returns:
             resulting response from the Zoom web api request in the format:
-            {'date': '2018-07-01', 'new_users': 1, 'meetings': 1, 'participants': 1, 'meeting_minutes': 1}
+            {
+                "date": "2018-07-01",
+                "new_users": 1,
+                "meetings": 1,
+                "participants": 1,
+                "meeting_minutes": 1,
+            }
         """
         today = datetime.now()
         yesterday = today - timedelta(1)
@@ -38,7 +59,7 @@ class report:
         year = str(int(yesterday.strftime("%Y")))
         month = str(int(yesterday.strftime("%m")))
 
-        result = self.zoom.api_client.do_request(
+        result = self.zoom.do_request(
             "get", "report/daily", {"year": year, "month": month}
         )
 

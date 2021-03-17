@@ -1,31 +1,36 @@
+"""
+zoom_client class and related methods for gathering data
+and making changes to Zoom groups
+"""
 import logging
 import json
 import time
-from datetime import datetime
-from ratelimit import limits, sleep_and_retry
 
 
-class group:
-    def __init__(self, controller, *args, **kwargs):
-        self.zoom = controller
+class Group:
+    """
+    zoom_client group class for gathering data and making changes to Zoom groups
+    """
+
+    def __init__(self, client):
+        self.zoom = client
+
+    @staticmethod
+    def chunks(big_list, count):
+        """ Helper method for chunking big lists into smaller ones """
+        for i in range(0, len(big_list), count):
+            yield big_list[i : i + count]
 
     def add_members(self, group_id, user_emails):
+        """ Add members to Zoom group in batch by list of userid's """
         # Special note: uses user emails as opposed to ID's
 
-        logging.info(
-            "Adding {} users to group with id {}".format(
-                str(len(user_emails)), group_id
-            )
-        )
+        logging.info("Adding %s users to group with id %s", len(user_emails), group_id)
 
-        def chunks(l, n):
-            for i in range(0, len(l), n):
-                yield l[i : i + n]
-
-        for chunk in list(chunks(user_emails, 30)):
+        for chunk in list(self.chunks(user_emails, 30)):
             logging.info("Processing adding chunk of 30 or less users to group...")
             post_data = {"members": [{"email": x} for x in chunk]}
-            result = self.zoom.api_client.do_request(
+            result = self.zoom.client.do_request(
                 "post",
                 "groups/" + group_id + "/members",
                 "",
@@ -37,21 +42,14 @@ class group:
         return result
 
     def delete_members(self, group_id, user_ids):
+        """ Delete members from Zoom group in batch by list of userid's """
         # Special note: uses user ID's as oppposed to emails
-        logging.info(
-            "Removing {} users from group with id {}".format(
-                str(len(user_ids)), group_id
-            )
-        )
+        logging.info("Removing %s users from group with id %s", len(user_ids), group_id)
 
-        def chunks(l, n):
-            for i in range(0, len(l), n):
-                yield l[i : i + n]
-
-        for chunk in list(chunks(user_ids, 30)):
+        for chunk in list(self.chunks(user_ids, 30)):
             logging.info("Processing removing chunk of 30 or less users from group...")
             for user_id in chunk:
-                result = self.zoom.api_client.do_request(
+                result = self.zoom.client.do_request(
                     "delete", "groups/" + group_id + "/members/" + user_id, ""
                 )
             # simple check to make sure we don't exceed rate limits, this needs improvement!

@@ -1,20 +1,50 @@
-import logging
-import json
-import requests
-import jwt
-import datetime
+"""
+Zoom client class which assists with performing work using Zoom API
+"""
 
+import datetime
+import json
+import logging
+import sys
+
+import jwt
+import requests
+
+import zoom_client.modules.dashboard as dashboard
+import zoom_client.modules.group as group
+import zoom_client.modules.report as report
+import zoom_client.modules.users as users
+
+# set recursion limit higher for rate limitations functions
+sys.setrecursionlimit(20000)
 requests.packages.urllib3.disable_warnings()
 
 
-class client:
-    def __init__(self, root_request_url, key, secret, data_type):
-        self.root_request_url = root_request_url
-        self.key = key
-        self.secret = secret
-        self.data_type = data_type
+class Client:
+    """ Zoom client class which assists with performing work using Zoom API """
+
+    def __init__(self, config_data):
+        """
+        params:
+            config_data: data used to configure the zoom api client
+        """
+        # set api client specific vars
+        self.root_request_url = config_data["root_request_url"]
+        self.key = config_data["api_key"]
+        self.secret = config_data["api_secret"]
+        self.data_type = config_data["data_type"]
+
+        # initialize module classes
+        self.users = users.Users(self)
+        self.group = group.Group(self)
+        self.report = report.Report(self)
+        self.dashboard = dashboard.Dashboard(self)
+
+        # initialize user model
+        self.model = {"users": None}
 
     def generate_jwt(self):
+        """ Generate valid jwt token for use in Zoom API requests """
         headers = {
             "alg": "HS256",
             "typ": "JWT",

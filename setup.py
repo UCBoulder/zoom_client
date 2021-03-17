@@ -1,5 +1,8 @@
+""" setup.py for zoom_client """
+import os
 import pathlib
-import setuptools, os
+
+import setuptools
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -8,11 +11,11 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 # Pull requirements from the text file
-requirement_path = HERE / "requirements.txt"
-install_requires = []
-if os.path.isfile(requirement_path):
-    with open(requirement_path) as f:
-        install_requires = f.read().splitlines()
+REQUIREMENT_PATH = HERE / "requirements.txt"
+INSTALL_REQUIRES = []
+if os.path.isfile(REQUIREMENT_PATH):
+    with open(REQUIREMENT_PATH) as f:
+        INSTALL_REQUIRES = f.read().splitlines()
 
 # This call to setup() does all the work
 setuptools.setup(
@@ -31,5 +34,5 @@ setuptools.setup(
     ],
     packages=["zoom_client", "zoom_client.modules"],
     python_requires=">=3.6",
-    install_requires=install_requires,
+    install_requires=INSTALL_REQUIRES,
 )
