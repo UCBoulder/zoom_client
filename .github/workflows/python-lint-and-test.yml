@@ -33,8 +33,9 @@ jobs:
 
     - name: ✨ Lint with pylint
       # note: using git to run pylint against any .py file and keep things simple
+      # disabling some minor aspects here for now
       run: |
-        pylint $(git ls-files '*.py')
+        pylint $(git ls-files '*.py')  --disable C0330,C0413
     
     - name: ✨ Lint with black
       run: |
