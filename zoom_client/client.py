@@ -17,7 +17,6 @@ import zoom_client.modules.users as users
 
 # set recursion limit higher for rate limitations functions
 sys.setrecursionlimit(20000)
-requests.packages.urllib3.disable_warnings()
 
 
 class Client:
