@@ -3,12 +3,12 @@ Zoom client class which assists with performing work using Zoom API
 """
 
 import datetime
-import json
 import logging
 import sys
 
 import jwt
 import requests
+from requests.exceptions import RequestException
 
 import zoom_client.modules.dashboard as dashboard
 import zoom_client.modules.group as group
@@ -29,10 +29,7 @@ class Client:
             config_data: data used to configure the zoom api client
         """
         # set api client specific vars
-        self.root_request_url = config_data["root_request_url"]
-        self.key = config_data["api_key"]
-        self.secret = config_data["api_secret"]
-        self.data_type = config_data["data_type"]
+        self.config_data = config_data
 
         # initialize module classes
         self.users = users.Users(self)
@@ -52,10 +49,10 @@ class Client:
 
         encoded = jwt.encode(
             {
-                "iss": self.key,
+                "iss": self.config_data["api_key"],
                 "exp": datetime.datetime.utcnow() + datetime.timedelta(seconds=30),
             },
-            self.secret,
+            self.config_data["api_secret"],
             algorithm="HS256",
             headers=headers,
         )
@@ -65,11 +62,11 @@ class Client:
             "Content-type": "application/json",
         }
 
-    def do_request(self, request_type, resource, request_parameters, body={}):
-
+    def do_request(self, request_type, resource, request_parameters, body=None):
+        """ Perform API request using the specified parameters """
         if request_type == "get":
             rsp = requests.get(
-                self.root_request_url + resource,
+                self.config_data["root_request_url"] + resource,
                 params=request_parameters,
                 headers=self.generate_jwt(),
                 verify=True,
@@ -77,7 +74,7 @@ class Client:
 
         elif request_type == "delete":
             rsp = requests.delete(
-                self.root_request_url + resource,
+                self.config_data["root_request_url"] + resource,
                 params=request_parameters,
                 headers=self.generate_jwt(),
                 verify=True,
@@ -85,7 +82,7 @@ class Client:
 
         elif request_type == "patch":
             rsp = requests.patch(
-                self.root_request_url + resource,
+                self.config_data["root_request_url"] + resource,
                 params=request_parameters,
                 data=body,
                 headers=self.generate_jwt(),
@@ -94,7 +91,7 @@ class Client:
 
         elif request_type == "post":
             rsp = requests.post(
-                self.root_request_url + resource,
+                self.config_data["root_request_url"] + resource,
                 params=request_parameters,
                 data=body,
                 headers=self.generate_jwt(),
@@ -102,17 +99,15 @@ class Client:
             )
 
         if "Retry-After" in rsp.headers.keys():
-            logging.warning("Retry-After detected: " + str(rsp.headers["Retry-After"]))
+            logging.warning("Retry-After detected: %s", rsp.headers["Retry-After"])
+            logging.warning("X-RateLimit-Limit: %s", rsp.headers["X-RateLimit-Limit"])
             logging.warning(
-                "X-RateLimit-Limit: " + str(rsp.headers["X-RateLimit-Limit"])
-            )
-            logging.warning(
-                "X-RateLimit-Remaining: " + str(rsp.headers["X-RateLimit-Remaining"])
+                "X-RateLimit-Remaining: %s", rsp.headers["X-RateLimit-Remaining"]
             )
 
         try:
             result = rsp.json()
-        except:
+        except RequestException:
             result = rsp
 
         rsp.close()
