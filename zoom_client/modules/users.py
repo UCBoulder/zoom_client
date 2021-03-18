@@ -1,15 +1,26 @@
-import logging
+"""
+zoom_client class and related methods for gathering data about or
+changing properties of existing Zoom users
+"""
 import json
+import logging
+import time
 from datetime import datetime
+
 from ratelimit import limits, sleep_and_retry
 
 
-class users:
-    def __init__(self, controller, *args, **kwargs):
-        self.zoom = controller
+class Users:
+    """
+    zoom_client users class for gathering data about or
+    changing properties of existing Zoom users
+    """
+
+    def __init__(self, client):
+        self.zoom = client
 
     def update_user(self, user_id, update_properties=json.dumps({})):
-
+        """ Update single Zoom user property by userid """
         logging.info(
             "Updating user with ID: "
             + user_id
@@ -17,13 +28,14 @@ class users:
             + update_properties
         )
 
-        result = self.zoom.api_client.do_request(
+        result = self.zoom.do_request(
             "patch", "users/" + user_id, "", body=update_properties
         )
 
         return result
 
     def batch_update_users(self, user_list, update_properties=json.dumps({})):
+        """ Update Zoom user properties in batch using provided list of userid's """
         number_users_updated = 0
         time_interval_request_count = 0
         start_time_interval = datetime.now()
@@ -33,7 +45,7 @@ class users:
             time_interval_request_count += 1
 
             if resp.status_code == 204:
-                logging.info("Updated user " + user_id + " successfully.")
+                logging.info("Updated user %s successfully.", user_id)
                 number_users_updated += 1
 
             # update the current time interval to accoutn for time restrictions in Zoom API
@@ -67,17 +79,17 @@ class users:
         return number_users_updated
 
     def delete_user(self, user_id):
+        """ Delete single Zoom user by userid """
+        logging.info("Deleting user with ID: %s", user_id)
 
-        logging.info("Deleting user with ID: " + user_id)
-
-        result = self.zoom.api_client.do_request(
+        result = self.zoom.do_request(
             "delete", "users/" + user_id, {"action": "delete"}
         )
 
         return result
 
     def batch_delete_users(self, user_list):
-
+        """ Delete Zoom users in batch based on provided list of userid's """
         number_users_deprovisioned = 0
         time_interval_request_count = 0
         start_time_interval = datetime.now()
@@ -88,7 +100,7 @@ class users:
             time_interval_request_count += 1
 
             if resp.status_code == 204:
-                logging.info("Deprovisioned user " + user_id + " successfully.")
+                logging.info("Deprovisioned user %s successfully.", user_id)
                 number_users_deprovisioned += 1
 
             # update the current time interval to accoutn for time restrictions in Zoom API
@@ -122,6 +134,7 @@ class users:
         return number_users_deprovisioned
 
     def get_current_users(self):
+        """ Gather current Zoom user data from account """
         logging.info("Gathering current Zoom user data ...")
 
         # Note: artificial rate limit
@@ -130,14 +143,12 @@ class users:
         @sleep_and_retry
         @limits(calls=60, period=5)
         def make_requests(
-            page_number: int = 1, page_count: int = None, result_list: list = []
+            page_number: int = 1, page_count: int = None, result_list: list = None
         ) -> list:
 
-            logging.info(
-                "Making user request " + str(page_number) + " of " + str(page_count)
-            )
+            logging.info("Making user request %s of %s", page_number, page_count)
             # make the Zoom api request and parse the result for the data we need
-            result = self.zoom.api_client.do_request(
+            result = self.zoom.do_request(
                 "get", "users", {"page_size": "300", "page_number": page_number}
             )
 
@@ -148,38 +159,38 @@ class users:
 
             page_number += 1
 
-            if page_number > int(result["page_count"]):
-                return result_list
-            else:
+            if page_number <= int(result["page_count"]):
                 make_requests(
                     page_number=page_number,
                     page_count=result["page_count"],
                     result_list=result_list,
                 )
-                return result_list
+
+            return result_list
 
         users_listing = make_requests()
 
-        self.zoom.model.users = users_listing
+        self.zoom.model["users"] = users_listing
 
         return users_listing
 
     def get_users_from_list(self, user_list):
+        """ Gather user data based on list of Zoom userid's provided """
         logging.info("Gathering current Zoom user data from list...")
 
         result_list = []
         for user in user_list:
-            result = self.zoom.api_client.do_request(
+            result = self.zoom.client.do_request(
                 "get", "users/" + user, {"userId": user}
             )
             result_list.append(result)
 
-        self.zoom.model.users = result_list
+        self.zoom.model["users"] = result_list
 
         return result_list
 
     def get_current_user_type_counts(self):
-
+        """ Gather current user type counts from Zoom account """
         logging.info("Gathering current Zoom user metrics...")
 
         # create various counts which will help provide metrics
@@ -188,11 +199,9 @@ class users:
         corp_account_count = 0
         account_count = 0
 
-        users = self.zoom.model.users
+        account_count = len(self.zoom.model["users"])
 
-        account_count = len(users)
-
-        for user_data in users:
+        for user_data in self.zoom.model["users"]:
 
             # change type from integer to human-readable value
             # also make counts of the number of accounts per type
@@ -209,10 +218,10 @@ class users:
         # Share various metrics with the user on
         # total, basic, pro and deprovisioning information to better
         # inform them before proceeding.
-        logging.info("Total accounts: " + str(account_count))
-        logging.info("Basic accounts: " + str(basic_account_count))
-        logging.info("Pro accounts: " + str(pro_account_count))
-        logging.info("Corp accounts: " + str(corp_account_count))
+        logging.info("Total accounts: %s", account_count)
+        logging.info("Basic accounts: %s", basic_account_count)
+        logging.info("Pro accounts: %s", pro_account_count)
+        logging.info("Corp accounts: %s", corp_account_count)
 
         return {
             "Basic Accounts": basic_account_count,
