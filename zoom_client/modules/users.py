@@ -20,7 +20,7 @@ class Users:
         self.zoom = client
 
     def update_user(self, user_id, update_properties=json.dumps({})):
-        """ Update single Zoom user property by userid """
+        """Update single Zoom user property by userid"""
         logging.info(
             "Updating user with ID: "
             + user_id
@@ -35,7 +35,7 @@ class Users:
         return result
 
     def batch_update_users(self, user_list, update_properties=json.dumps({})):
-        """ Update Zoom user properties in batch using provided list of userid's """
+        """Update Zoom user properties in batch using provided list of userid's"""
         number_users_updated = 0
         time_interval_request_count = 0
         start_time_interval = datetime.now()
@@ -79,7 +79,7 @@ class Users:
         return number_users_updated
 
     def delete_user(self, user_id):
-        """ Delete single Zoom user by userid """
+        """Delete single Zoom user by userid"""
         logging.info("Deleting user with ID: %s", user_id)
 
         result = self.zoom.do_request(
@@ -89,7 +89,7 @@ class Users:
         return result
 
     def batch_delete_users(self, user_list):
-        """ Delete Zoom users in batch based on provided list of userid's """
+        """Delete Zoom users in batch based on provided list of userid's"""
         number_users_deprovisioned = 0
         time_interval_request_count = 0
         start_time_interval = datetime.now()
@@ -134,7 +134,7 @@ class Users:
         return number_users_deprovisioned
 
     def get_current_users(self):
-        """ Gather current Zoom user data from account """
+        """Gather current Zoom user data from account"""
         logging.info("Gathering current Zoom user data ...")
 
         # Note: artificial rate limit
@@ -175,7 +175,7 @@ class Users:
         return users_listing
 
     def get_users_from_list(self, user_list):
-        """ Gather user data based on list of Zoom userid's provided """
+        """Gather user data based on list of Zoom userid's provided"""
         logging.info("Gathering current Zoom user data from list...")
 
         result_list = []
@@ -190,7 +190,7 @@ class Users:
         return result_list
 
     def get_current_user_type_counts(self):
-        """ Gather current user type counts from Zoom account """
+        """Gather current user type counts from Zoom account"""
         logging.info("Gathering current Zoom user metrics...")
 
         # create various counts which will help provide metrics
