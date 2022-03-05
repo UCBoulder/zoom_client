@@ -25,28 +25,14 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: ⚙️ Install dependencies
+    - name: ⚙️ Install
       run: |
-        python -m pip install --upgrade pip
-        pip install pylint black pytest bandit
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        make install
 
-    - name: ✨ Lint with pylint
-      # note: using git to run pylint against any .py file and keep things simple
-      # disabling some minor aspects here for now
+    - name: ✨ Lint
       run: |
-        pylint $(git ls-files '*.py')  --disable C0330,C0413
-    
-    - name: ✨ Lint with black
-      run: |
-        black . --check
-
-    - name: 🛡️ Security lint with bandit
-      # note: we exclude the tests dir using the -x flag to avoid assert test failure
-      # see: https://bandit.readthedocs.io/en/latest/plugins/b101_assert_used.html
-      run: |
-        bandit -r . -x ./tests
+        make lint
 
     - name: ✅ Test with pytest
       run: |
-        pytest
+        make test

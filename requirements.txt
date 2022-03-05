@@ -1,3 +1,6 @@
-requests
+bandit
 PyJWT
+pylint
+pytest
 ratelimit
+requests
