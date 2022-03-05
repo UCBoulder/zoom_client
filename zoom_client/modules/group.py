@@ -17,12 +17,12 @@ class Group:
 
     @staticmethod
     def chunks(big_list, count):
-        """ Helper method for chunking big lists into smaller ones """
+        """Helper method for chunking big lists into smaller ones"""
         for i in range(0, len(big_list), count):
             yield big_list[i : i + count]
 
     def add_members(self, group_id, user_emails):
-        """ Add members to Zoom group in batch by list of userid's """
+        """Add members to Zoom group in batch by list of userid's"""
         # Special note: uses user emails as opposed to ID's
 
         logging.info("Adding %s users to group with id %s", len(user_emails), group_id)
@@ -42,7 +42,7 @@ class Group:
         return result
 
     def delete_members(self, group_id, user_ids):
-        """ Delete members from Zoom group in batch by list of userid's """
+        """Delete members from Zoom group in batch by list of userid's"""
         # Special note: uses user ID's as oppposed to emails
         logging.info("Removing %s users from group with id %s", len(user_ids), group_id)
 

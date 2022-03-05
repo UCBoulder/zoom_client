@@ -10,17 +10,17 @@ import jwt
 import requests
 from requests.exceptions import RequestException
 
-import zoom_client.modules.dashboard as dashboard
-import zoom_client.modules.group as group
-import zoom_client.modules.report as report
-import zoom_client.modules.users as users
+from zoom_client.modules import dashboard
+from zoom_client.modules import group
+from zoom_client.modules import report
+from zoom_client.modules import users
 
 # set recursion limit higher for rate limitations functions
 sys.setrecursionlimit(20000)
 
 
 class Client:
-    """ Zoom client class which assists with performing work using Zoom API """
+    """Zoom client class which assists with performing work using Zoom API"""
 
     def __init__(self, config_data):
         """
@@ -40,7 +40,7 @@ class Client:
         self.model = {"users": None}
 
     def generate_jwt(self):
-        """ Generate valid jwt token for use in Zoom API requests """
+        """Generate valid jwt token for use in Zoom API requests"""
         headers = {
             "alg": "HS256",
             "typ": "JWT",
@@ -57,12 +57,12 @@ class Client:
         )
 
         return {
-            "Authorization": "Bearer " + encoded.decode("utf-8"),
+            "Authorization": f"Bearer {encoded}",
             "Content-type": "application/json",
         }
 
     def do_request(self, request_type, resource, request_parameters, body=None):
-        """ Perform API request using the specified parameters """
+        """Perform API request using the specified parameters"""
         if request_type == "get":
             rsp = requests.get(
                 self.config_data["root_request_url"] + resource,
