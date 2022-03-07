@@ -143,7 +143,7 @@ class Users:
         @sleep_and_retry
         @limits(calls=60, period=5)
         def make_requests(
-            page_number: int = 1, page_count: int = None, result_list: list = None
+            page_number: int = 1, page_count: int = 0, result_list: list = []
         ) -> list:
 
             logging.info("Making user request %s of %s", page_number, page_count)
@@ -153,7 +153,7 @@ class Users:
             )
 
             # if no users are returned in the result, we break our loop
-            if "users" in result:
+            if "users" in result.keys():
                 user_results = result["users"]
                 result_list += user_results
 
